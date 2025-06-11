@@ -1,0 +1,28 @@
+# .github/workflows/ci.yml
+
+name: Run Lint and Tests
+
+on:
+  push:
+    branches:
+      - '*'   # roda em qualquer branch
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout o código
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js (exemplo se for projeto web)
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Instalar dependências
+        run: npm install
+
+      - name: Rodar testes (ou linters)
+        run: npm test
