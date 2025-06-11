@@ -1,0 +1,25 @@
+name: Validador de Push
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - '**.yml'
+      - '**.yaml'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Validar arquivos YAML
+      run: |
+        echo "Validando arquivos YAML..."
+        # Exemplo de validação básica
+        for file in $(find . -name "*.yml" -o -name "*.yaml"); do
+          echo "Validando $file"
+          yamllint $file || exit 1
+        done
