@@ -1,17 +1,38 @@
- - name: Update deployment status (success)
+name: Update Deployment Status
+
+on:
+  push:
+    branches:
+      - main
+  workflow_run:
+    workflows: ["CI"]
+    types:
+      - completed
+
+jobs:
+  update-deployment-status:
+    runs-on: ubuntu-latest
+    if: ${{ always() }}  # Executa sempre, para capturar sucesso ou falha
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Update deployment status (success)
         if: success()
-        uses: chrnorm/deployment-status@v2
+        uses: chrnorm/deployment-action@v2
         with:
-          token: '${{ github.token }}'
-          environment-url: https://mindpro.atlassian.net/jira/apps/28b2a361-b20b-49c8-a490-b108027823bd/f2d87eef-7989-49bd-ad7e-54cb8e83f4bb
-          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          environment: production
+          environment-url: ${{ secrets.JIRA_URL }}  # Use uma variável secreta para a URL
+          deployment-id: ${{ steps.deployment.outputs.deployment-id }}
           state: 'success'
 
       - name: Update deployment status (failure)
         if: failure()
-        uses: chrnorm/deployment-status@v2
+        uses: chrnorm/deployment-action@v2
         with:
-          token: '${{ github.token }}'
-          environment-url: https://mindpro.atlassian.net/jira/apps/28b2a361-b20b-49c8-a490-b108027823bd/f2d87eef-7989-49bd-ad7e-54cb8e83f4bb
-          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          environment: production
+          environment-url: ${{ secrets.JIRA_URL }}  # Use uma variável secreta para a URL
+          deployment-id: ${{ steps.deployment.outputs.deployment-id }}
           state: 'failure'
