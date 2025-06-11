@@ -24,6 +24,13 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
+      - uses: chrnorm/deployment-action@v2
+        name: Production Deploy
+        id: deployment
+        with:
+          token: '${{ github.token }}'
+          environment: production
+          environment-url: https://mindpro.atlassian.net/jira/settings/apps/75b55752-83fc-4cca-a5ae-0bc1383c7612/d5ca5031-cb93-4821-8376-b3a621ae264d
 
       # Runs a single command using the runners shell
       - name: Run a one-line script
@@ -34,7 +41,7 @@ jobs:
         run: |
           echo Add other actions to build,
           echo test, and deploy your project.
-- name: Update deployment status (success)
+      - name: Update deployment status (success)
         if: success()
         uses: chrnorm/deployment-status@v2
         with:
