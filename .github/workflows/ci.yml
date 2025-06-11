@@ -1,5 +1,3 @@
-# This is a basic workflow to help you get started with Actions
-
 name: CI
 
 # Controls when the workflow will run
@@ -24,13 +22,16 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
-      - uses: chrnorm/deployment-action@v2
-        name: Production Deploy
+
+      # Action for Jira deployment
+      - name: Production Deploy
         id: deployment
+        uses: chrnorm/deployment-action@v2
         with:
-          token: '${{ github.token }}'
+          token: ${{ secrets.GITHUB_TOKEN }} # Use GITHUB_TOKEN with proper permissions
           environment: production
-          environment-url: https://mindpro.atlassian.net/jira/settings/apps/75b55752-83fc-4cca-a5ae-0bc1383c7612/d5ca5031-cb93-4821-8376-b3a621ae264d
+          environment-url: https://mindpro.atlassian.net/jira/settings/apps/75b55752-83fc-4cca-a5ae-0bc1383c7612/dsc50931-cb93-4821-8376-b3a621ae264d
+          # Ensure the token has 'repo' and 'deployment' scopes if using a PAT instead
 
       # Runs a single command using the runners shell
       - name: Run a one-line script
@@ -41,4 +42,3 @@ jobs:
         run: |
           echo Add other actions to build,
           echo test, and deploy your project.
-    
