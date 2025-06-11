@@ -1,0 +1,49 @@
+name: Validador Multi-Linguagem
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+
+    # Validação CSS (corrigido)
+    - name: Validar CSS
+      run: |
+        echo "Instalando csslint..."
+        npm install -g csslint
+        
+        echo "Validando arquivos CSS..."
+        for file in $(find . -name "*.css"); do
+          echo "Validando $file"
+          csslint $file || exit 1
+        done
+
+    # Validação JavaScript (corrigido)
+    - name: Validar JavaScript
+      run: |
+        echo "Instalando eslint..."
+        npm install -g eslint
+        
+        echo "Validando arquivos JS..."
+        for file in $(find . -name "*.js"); do
+          echo "Validando $file"
+          eslint $file || exit 1
+        done
+
+    # Validação Python (corrigido)
+    - name: Validar Python
+      run: |
+        echo "Instalando flake8..."
+        pip install flake8
+        
+        echo "Validando arquivos Python..."
+        for file in $(find . -name "*.py"); do
+          echo "Validando $file"
+          flake8 $file || exit 1
+        done
+
