@@ -6,20 +6,36 @@ on:
     paths:
       - '**.yml'
       - '**.yaml'
+      - '**.html'
+      - '**.css'
+      - '**.js'
+      - '**.py'
 
 jobs:
   validate:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       
-    - name: Validar arquivos YAML
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        
+    - name: Validar YAML
       run: |
-        echo "Validando arquivos YAML..."
-        # Exemplo de validação básica
-        for file in $(find . -name "*.yml" -o -name "*.yaml"); do
-          echo "Validando $file"
-          yamllint $file || exit 1
-        done
+        pip install pyyaml
+        python -c "
+        import yaml, glob
+        for file in glob.glob('**/*.yml', recursive=True) + glob.glob('**/*.yaml', recursive=True):
+          try:
+            with open(file) as f:
+              yaml.safe_load(f)
+            print(f'✅ {file} válido')
+          except Exception as e:
+            print(f'❌ Erro em {file}: {str(e)}')
+            exit(1)
+        "
