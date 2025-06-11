@@ -1,0 +1,17 @@
+ - name: Update deployment status (success)
+        if: success()
+        uses: chrnorm/deployment-status@v2
+        with:
+          token: '${{ github.token }}'
+          environment-url: https://mindpro.atlassian.net/jira/apps/28b2a361-b20b-49c8-a490-b108027823bd/f2d87eef-7989-49bd-ad7e-54cb8e83f4bb
+          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
+          state: 'success'
+
+      - name: Update deployment status (failure)
+        if: failure()
+        uses: chrnorm/deployment-status@v2
+        with:
+          token: '${{ github.token }}'
+          environment-url: https://mindpro.atlassian.net/jira/apps/28b2a361-b20b-49c8-a490-b108027823bd/f2d87eef-7989-49bd-ad7e-54cb8e83f4bb
+          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
+          state: 'failure'
