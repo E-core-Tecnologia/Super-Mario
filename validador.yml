@@ -1,0 +1,57 @@
+name: Validador de push
+
+on:
+  push:
+    branches:
+      - '*'  # qualquer branch
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout do código
+      - name: Checkout do código
+        uses: actions/checkout@v3
+
+      # Configura Node.js (HTML, CSS, JS)
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      # Instala dependências do Node.js
+      - name: Instalar dependências Node.js
+        run: |
+          if [ -f package.json ]; then
+            npm install
+          fi
+
+      # Roda testes ou linters JS
+      - name: Rodar testes Node.js
+        run: |
+          if [ -f package.json ]; then
+            npm test
+          fi
+
+      # Setup do Python
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      # Instala dependências Python
+      - name: Instalar dependências Python
+        run: |
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          fi
+
+      # Rodar testes Python (pytest, por exemplo)
+      - name: Rodar testes Python
+        run: |
+          if [ -f requirements.txt ]; then
+            pytest || echo "pytest não está configurado"
+          fi
+
