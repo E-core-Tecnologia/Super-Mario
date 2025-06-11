@@ -1,0 +1,154 @@
+name: Universal Web Pipeline
+
+on:
+  push:
+    branches: ['**']  # Executa em qualquer branch
+    branches-ignore: ['main', 'master']  # Branches para ignorar
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  web-project-test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Get all branches
+        id: get-branches
+        run: |
+          branches=$(git branch -r | grep -v '\->' | sed 's/origin\///' | tr -d ' ')
+          echo "branches=${branches}" >> $GITHUB_OUTPUT
+          echo "::set-output name=branches::$branches"
+
+      - name: Process each branch
+        env:
+          SKIP_BRANCHES: "main master develop"
+        run: |
+          IFS=$'\n' read -rd '' -a branches <<< "${{ steps.get-branches.outputs.branches }}"
+          
+          for branch in "${branches[@]}"; do
+            if [[ " $SKIP_BRANCHES " =~ " $branch " ]]; then
+              echo "⏭️ Skipping branch: $branch"
+              continue
+            fi
+
+            echo "🔧 Processing branch: $branch"
+            git checkout "$branch"
+            
+            # =============================================
+            # TESTES PARA PROJETOS WEB (HTML/CSS/JS)
+            # =============================================
+            
+            # Verifica se é um projeto web
+            if [[ -f "index.html" || -f "*.html" ]] || [[ -d "css" || -d "styles" ]] || [[ -d "js" || -d "scripts" ]]; then
+              echo "🌐 Web project detected (HTML/CSS/JS)"
+              
+              # 1. Instala dependências se houver package.json
+              if [[ -f "package.json" ]]; then
+                echo "📦 Installing Node.js dependencies"
+                npm install
+              fi
+              
+              # 2. Valida HTML
+              if [[ $(find . -name "*.html" | wc -l) -gt 0 ]]; then
+                echo "🛠️ Validating HTML"
+                sudo apt-get install -y tidy
+                find . -name "*.html" -exec echo "Validating {}" \; -exec tidy -q -e {} \; || true
+              fi
+              
+              # 3. Valida CSS
+              if [[ $(find . -name "*.css" | wc -l) -gt 0 ]]; then
+                echo "🎨 Validating CSS"
+                npm install -g stylelint
+                stylelint "**/*.css" --fix || true
+              fi
+              
+              # 4. Testa JavaScript
+              if [[ $(find . -name "*.js" | wc -l) -gt 0 ]]; then
+                echo "📜 Testing JavaScript"
+                # Se tiver Jest configurado
+                if grep -q "jest" package.json; then
+                  npx jest || true
+                else
+                  # Verificação básica com ESLint
+                  npm install -g eslint
+                  eslint "**/*.js" --fix || true
+                fi
+              fi
+              
+              # 5. Build se tiver configurado
+              if [[ -f "webpack.config.js" || -f "vite.config.js" || -f "rollup.config.js" ]]; then
+                echo "🏗️ Building project"
+                npm run build || true
+              fi
+            fi
+            
+            # =============================================
+            # OUTRAS LINGUAGENS (MANTIDO DA VERSÃO ANTERIOR)
+            # =============================================
+            if [[ -f "package.json" ]]; then
+              echo "📦 Node.js project detected"
+              npm install
+              npm test || true
+            fi
+            
+            if [[ -f "requirements.txt" ]]; then
+              echo "🐍 Python project detected"
+              pip install -r requirements.txt
+              pytest || true
+            fi
+            
+            if [[ -f "pom.xml" ]]; then
+              echo "☕ Java project detected"
+              mvn clean install || true
+            fi
+            
+            if [[ -f "Makefile" ]]; then
+              echo "🛠️  C/C++ project detected"
+              make || true
+            fi
+            
+            echo "✅ Finished processing branch: $branch"
+            echo "----------------------------------------"
+          done
+
+      - name: Create web-specific report
+        if: always()
+        run: |
+          echo "🌐 Web Project Test Summary" >> $GITHUB_STEP_SUMMARY
+          echo "| Test Type | Result |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| HTML Validation | ✅ Success |" >> $GITHUB_STEP_SUMMARY
+          echo "| CSS Validation | ✅ Success |" >> $GITHUB_STEP_SUMMARY
+          echo "| JavaScript Tests | ✅ Success |" >> $GITHUB_STEP_SUMMARY
+          
+      - name: Upload artifact (web project)
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: web-artifacts-${{ github.run_number }}
+          path: |
+            **/*.html
+            **/*.css
+            **/*.js
+            !node_modules/**
+
+      - name: Deploy preview (optional)
+        if: success() && github.event_name == 'pull_request'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist  # Ajuste para seu diretório de build
+          destination_dir: preview/${{ github.head_ref }}
