@@ -1,44 +1,49 @@
-name: CI
+name: Validador Multi-Linguagem
 
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    branches: [ main ]
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
+  validate:
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
+    
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v4
+    - uses: actions/checkout@v3
 
-      # Action for Jira deployment
-      - name: Production Deploy
-        id: deployment
-        uses: chrnorm/deployment-action@v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }} # Use GITHUB_TOKEN with proper permissions
-          environment: production
-          environment-url: https://mindpro.atlassian.net/jira/settings/apps/75b55752-83fc-4cca-a5ae-0bc1383c7612/dsc50931-cb93-4821-8376-b3a621ae264d
-          # Ensure the token has 'repo' and 'deployment' scopes if using a PAT instead
+    # Validação CSS (corrigido)
+    - name: Validar CSS
+      run: |
+        echo "Instalando csslint..."
+        npm install -g csslint
+        
+        echo "Validando arquivos CSS..."
+        for file in $(find . -name "*.css"); do
+          echo "Validando $file"
+          csslint $file || exit 1
+        done
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
+    # Validação JavaScript (corrigido)
+    - name: Validar JavaScript
+      run: |
+        echo "Instalando eslint..."
+        npm install -g eslint
+        
+        echo "Validando arquivos JS..."
+        for file in $(find . -name "*.js"); do
+          echo "Validando $file"
+          eslint $file || exit 1
+        done
 
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
-        run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+    # Validação Python (corrigido)
+    - name: Validar Python
+      run: |
+        echo "Instalando flake8..."
+        pip install flake8
+        
+        echo "Validando arquivos Python..."
+        for file in $(find . -name "*.py"); do
+          echo "Validando $file"
+          flake8 $file || exit 1
+        done
+
