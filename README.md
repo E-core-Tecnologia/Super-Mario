@@ -4,3 +4,12 @@ echo "\n<!-- Testando GitHub Actions -->" >> README.md
 
 # Teste de Actions
 # Teste final
+# Teste de Actions
+# Teste final
+# Teste de Actions
+# Teste final
+# Teste de Actions
+# Teste final
+# Teste final
+# Teste de Actions
+# Teste final
