@@ -12,7 +12,8 @@ on:
 jobs:
   update-deployment-status:
     runs-on: ubuntu-latest
-    if: ${{ always() }}  # Executa sempre, para capturar sucesso ou falha
+    if: ${{ always() }}
+    environment: Configure_JIRA_URL
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -22,9 +23,8 @@ jobs:
         uses: chrnorm/deployment-action@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          environment: production
-          environment-url: ${{ secrets.JIRA_URL }}  # Use uma variável secreta para a URL
-          deployment-id: ${{ steps.deployment.outputs.deployment-id }}
+          environment: Configure_JIRA_URL
+          environment-url: ${{ secrets.JIRA_URL }}
           state: 'success'
 
       - name: Update deployment status (failure)
@@ -32,7 +32,6 @@ jobs:
         uses: chrnorm/deployment-action@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          environment: production
-          environment-url: ${{ secrets.JIRA_URL }}  # Use uma variável secreta para a URL
-          deployment-id: ${{ steps.deployment.outputs.deployment-id }}
+          environment: Configure_JIRA_URL
+          environment-url: ${{ secrets.JIRA_URL }}
           state: 'failure'
