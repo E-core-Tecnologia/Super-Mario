@@ -1,0 +1,22 @@
+name: Update Deployment Status
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  update-deployment-status:
+    runs-on: ubuntu-latest
+    environment: Configure_JIRA_URL
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Update deployment status
+        uses: chrnorm/deployment-action@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          environment: Configure_JIRA_URL
+          environment-url: ${{ secrets.JIRA_URL }}  # Deve ser https://e-core-testes.atlassian.net/jira/software/projects/DDS
+          state: ${{ job.status == 'success' && 'success' || 'failure' }}
