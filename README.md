@@ -1,26 +1,4 @@
 # Super-Mario
 echo "\n<!-- Testando GitHub Actions -->" >> README.md
-# Teste GitHub Actions Wed Jun 11 00:48:40 -03 2025
-
-# Teste de Actions
-# Teste final
-# Teste de Actions
-# Teste final
-# Teste de Actions
-# Teste final
-# Teste de Actions
-# Teste final
-# Teste final
-# Teste de Actions
-# Teste final
-# Teste de Actions
-# Teste final
-# Teste final
-# Teste de Actions
-# Teste final
- Teste de Actions
-# Teste final
-# Teste de Actions
-# Teste final
- Teste de Actions
-# Teste final
+# Teste GitHub Actions teste
+# Teste GitHub Actions teste
