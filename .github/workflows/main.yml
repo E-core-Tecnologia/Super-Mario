@@ -18,5 +18,6 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           environment: Configure_JIRA_URL
-          environment-url: ${{ secrets.JIRA_URL }}  # Deve ser https://e-core-testes.atlassian.net/jira/software/projects/DDS
+          environment-url: ${{ secrets.JIRA_URL }}
           state: ${{ job.status == 'success' && 'success' || 'failure' }}
+          task: deploy  # Opcional, se aplicável
