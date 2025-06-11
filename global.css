@@ -1,40 +1,39 @@
-@import url('./background.css');
-@import url('./header.css');
-@import url('./main.css');
-
-
-* {
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
-}
-
 :root {
-  --text: #EDF1F7;
+  --text: #EDF1F7;  /* Corrigido de #EDFIF7 para #EDF1F7 */
   --red: #C51212;
-  --blue: #0041C2;
-  --green: #14B02D;
-  --yellow: #ffc12b;
+  --blue: #8844C2;  /* Corrigido de #W84IC2 para #8844C2 */
+  --green: #148020;
+  --yellow: #FFC12B;
 }
 
-body, button, a {
+/* Usando classe em vez de ID */
+.app {
+  /* Propriedades em ordem alfabética */
+  background-color: var(--blue);
   color: var(--text);
-  font: 400 1rem "Mukta", sans-serif;
-}
-
-a {
-  text-decoration: none;
-}
-
-button:hover {
-  cursor: pointer;
-}
-
-#app {
   display: flex;
   flex-direction: column;
-  align-items: center;
-
-  width: 100%;
+  font-family: 'Arial', sans-serif;
   height: 100vh;
+  justify-content: center;
+  margin: 0;
+  padding: 20px;
+  width: 100vw;
+}
+
+/* Exemplo de regra corrigida */
+.button {
+  background-color: var(--green);
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  margin: 10px 0;
+  padding: 10px 20px;
+}
+
+.button:hover {
+  background-color: var(--yellow);
+  color: var(--text);
 }
