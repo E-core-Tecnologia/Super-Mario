@@ -37,3 +37,43 @@
   background-color: var(--yellow);
   color: var(--text);
 }
+
+:root {
+  --text: #EDF1F7;  /* Corrigido de #EDFIF7 para #EDF1F7 */
+  --red: #C51212;
+  --blue: #8844C2;  /* Corrigido de #W84IC2 para #8844C2 */
+  --green: #148020;
+  --yellow: #FFC12B;
+}
+
+/* Usando classe em vez de ID */
+.app {
+  /* Propriedades em ordem alfabética */
+  background-color: var(--blue);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  font-family: 'Arial', sans-serif;
+  height: 100vh;
+  justify-content: center;
+  margin: 0;
+  padding: 20px;
+  width: 100vw;
+}
+
+/* Exemplo de regra corrigida */
+.button {
+  background-color: var(--green);
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  margin: 10px 0;
+  padding: 10px 20px;
+}
+
+.button:hover {
+  background-color: var(--yellow);
+  color: var(--text);
+}
